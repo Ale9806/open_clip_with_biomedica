@@ -396,7 +396,21 @@ def main(args):
         if args.val_data is not None:
             args.val_sz = data["val"].dataloader.num_samples
         # you will have to configure this for your project!
+
+        try:
+            GROUP = os.environ["WANDB_RUN_GROUP"]
+            print("*"*100)
+            print("COULD  LOAD GROUP")
+            print("*"*100)
+        except:
+            print("*"*100)
+            print("COULD NOT LOAD GROUP")
+            print("*"*100)
+            GROUP ="SIGLIP_CT_from_webli"
+
+
         wandb.init(
+            group=GROUP,
             project=args.wandb_project_name,
             name=args.name,
             id=args.name,
@@ -432,7 +446,7 @@ def main(args):
     for epoch in range(start_epoch, args.epochs):
         if is_master(args):
             logging.info(f'Start epoch {epoch}')
-
+       
         train_one_epoch(model, data, loss, epoch, optimizer, scaler, scheduler, dist_model, args, tb_writer=writer)
         completed_epoch = epoch + 1
 

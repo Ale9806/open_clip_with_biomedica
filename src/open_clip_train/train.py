@@ -92,6 +92,7 @@ def train_one_epoch(model, data, loss, epoch, optimizer, scaler, scheduler, dist
         images, texts = batch
         images = images.to(device=device, dtype=input_dtype, non_blocking=True)
         texts = texts.to(device=device, non_blocking=True)
+        #import pdb;pdb.set_trace() 
 
         data_time_m.update(time.time() - end)
         optimizer.zero_grad()

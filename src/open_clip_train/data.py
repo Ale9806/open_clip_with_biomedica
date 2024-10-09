@@ -214,7 +214,7 @@ def group_by_keys_nothrow(data, keys=base_plus_ext, lcase=True, suffixes=None, h
 def tarfile_to_samples_nothrow(src, handler=log_and_continue):
     # NOTE this is a re-impl of the webdataset impl with group_by_keys that doesn't throw
     streams = url_opener(src, handler=handler)
-    files = tar_file_expander(streams, handler=handler)
+    files = tar_file_expander(streams, handler=handler,eof_value=None)
     samples = group_by_keys_nothrow(files, handler=handler)
     return samples
 
@@ -390,7 +390,7 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
         wds.select(filter_no_caption_or_no_image),
         wds.decode("pilrgb", handler=log_and_continue),
         wds.rename(image="jpg;png;jpeg;webp", text="txt"),
-        wds.map_dict(image=preprocess_img, text=lambda text: tokenizer(text)[0]),
+        wds.map_dict(image=preprocess_img, text=lambda text: tokenizer(text)[0]), # Comment to see the raw inputs 
         wds.to_tuple("image", "text"),
         wds.batched(args.batch_size, partial=not is_train)
     ])
@@ -439,6 +439,16 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
     # add meta-data to dataloader instance for convenience
     dataloader.num_batches = num_batches
     dataloader.num_samples = num_samples
+
+
+    def get_a_data_point(dataset):
+        for datapoint in dataset:
+            abata =datapoint
+            break
+            
+        return abata
+    
+    #import pdb;pdb.set_trace()
 
     return DataInfo(dataloader=dataloader, shared_epoch=shared_epoch)
 
