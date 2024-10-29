@@ -1,10 +1,12 @@
 import subprocess, threading
 import os, time, random
 import pandas as pd
+import uuid
+import socket
 
 # Constants
 NUM_NODES = 1
-NUM_GPUS = 1
+NUM_GPUS = 4
 MAX_RETRIES = 1
 TIME_TO_HANG = 1000
 error_dict = {
@@ -13,6 +15,7 @@ error_dict = {
     'IndexError': "IndexError: list index out of range", 
     "TimeoutError": "TimeoutError: The client socket has timed out after "
 }
+
 
 # Load job configurations from CSV
 def get_size_time(log_file_path):
@@ -46,30 +49,51 @@ def check_errors_in_file(file_path):
 
     return False, None
 
+
+def find_free_port() -> int:
+    """
+    Find and return an available port on the local machine.
+
+    This function creates a temporary socket, binds it to a free port assigned
+    by the operating system, and then closes the socket. The assigned port 
+    number is returned.
+
+    Returns:
+        int: A free port number available for use.
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('', 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
+
+
 # Function to submit and monitor a single job
 def submit_and_monitor_job(row, df):
 
     os.makedirs('./slurm_logs', exist_ok=True)
 
-    RDZV_ID = str(random.randint(0, 9999)) # trunkate to 4 digits
-    RDZV_PORT= random.randint(20000, 29999)  # Range from 20000 to 29999
+    # RDZV_ID = str(random.randint(0, 9999)) # trunkate to 4 digits
+    # RDZV_PORT= random.randint(20000, 29999)  # Range from 20000 to 29999
+    RDZV_ID = str(uuid.uuid4())[:8]  # Truncate for readability
+    RDZV_PORT = find_free_port()  # Get an available port
+
     BATCH_SCRIPT = f"torchrun{RDZV_PORT}.sh"
     print("writing", BATCH_SCRIPT)
 
     with open(BATCH_SCRIPT, "w") as f:
         f.write(f"""#!/bin/bash
-#SBATCH --job-name=experiment
+#SBATCH --job-name=dir
 #SBATCH -p pasteur
 #SBATCH -A pasteur
 #SBATCH --nodes={NUM_NODES}
 #SBATCH --ntasks={NUM_NODES}
-#SBATCH --mem={32 * NUM_GPUS}G
+#SBATCH --mem=64GB
 #SBATCH --gres=gpu:{NUM_GPUS} # gpu:a100{NUM_GPUS}
 #SBATCH --cpus-per-task={2 * NUM_GPUS}
 #SBATCH --output=./slurm_logs/overfit-%j-out.txt
 #SBATCH --error=./slurm_logs/overfit-%j-err.txt
-#SBATCH --exclude=pasteur[1-5,8]
-#SBATCH --nodelist=pasteur-hgx-1
+#SBATCH --exclude=pasteur[1-4,8-9]
 
 nodes=( $( scontrol show hostnames $SLURM_JOB_NODELIST ) )
 nodes_array=($nodes)
@@ -86,34 +110,36 @@ export CUDA_VISIBLE_DEVICES=0
 export WANDB_RUN_GROUP="ViT_L_14_from_webli"
 
 source ~/.bashrc
-conda activate train_clip
+conda activate train_clip3
+
+cd ../src
 
 srun torchrun --nproc_per_node={NUM_GPUS} --nnodes={NUM_NODES} --node_rank=$SLURM_NODEID --rdzv_id {RDZV_ID} --rdzv_backend c10d --rdzv_endpoint $head_node_ip:{RDZV_PORT} -m open_clip_train.main \
     --save-most-recent \
-    --train-data '/pasteur2/u/{row["user"]}/data/pmc-oa/full_panel/other/{row["data_range"]}.tar' \
-    --train-num-samples {row["train_num_samples"]} \
-    --accum-freq {row["accum_freq"]} \
-    --lr-scheduler '{row["lr_scheduler"]}' \
-    --dataset-type {row["dataset_type"]} \
-    --lr "{row["learning_rate"]}" \
-    --beta1 {row["beta1"]} \
-    --beta2 {row["beta2"]} \
-    --warmup {row["warmup_steps"]} \
-    --wd {row["weight_decay"]} \
-    --batch-size {row["batch_size"]} \
-    --epochs={row["epochs"]} \
-    --workers={row["num_workers"]} \
-    --model {row["model"]} \
-    --precision '{row["precision"]}' \
+    --train-data "/pasteur2/u/ale9806/data/pmc-oa/full_panel_w_labels/commercial/{{000000..000100}}.tar::/pasteur2/u/ale9806/data/pmc-oa/full_panel_w_labels/noncommercial/{{000000..000100}}.tar::/pasteur2/u/ale9806/data/pmc-oa/full_panel_w_labels/other/{{000000..000100}}.tar" \
+    --train-num-samples 30000 \
+    --accum-freq 4 \
+    --lr-scheduler "cosine" \
+    --dataset-type "webdataset" \
+    --lr 1e-6 \
+    --beta1 0.9 \
+    --beta2 0.95 \
+    --warmup 1000 \
+    --wd 0.2 \
+    --batch-size 512 \
+    --epochs 100 \
+    --workers 1 \
+    --model "ViT-L-14" \
+    --precision "fp16" \
     --local-loss \
     --gather-with-grad \
     --grad-checkpointing \
-    --log-every-n-steps {row["log_steps"]} \
-    --seed {row["seed"]} \
-    --logs {row["logs_dir"]} \
-    --pretrained "{row["pretrained"]}" \
-    --report-to "{row["report_to"]}" \
-    --wandb-project-name "{row["wandb_project_name"]}"
+    --log-every-n-steps 1 \
+    --seed 0 \
+    --logs ./logs_exp_dir/ \
+    --pretrained "commonpool_xl_clip_s13b_b90k" \
+    --report-to "wandb" \
+    --wandb-project-name "open-biomed-clip"
 """)
 
     # Submit the job
