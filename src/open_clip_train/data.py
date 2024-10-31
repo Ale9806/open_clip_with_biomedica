@@ -20,6 +20,8 @@ from torch.utils.data.distributed import DistributedSampler
 from webdataset.filters import _shuffle
 from webdataset.tariterators import base_plus_ext, url_opener, tar_file_expander, valid_sample
 
+from huggingface_hub import HfFolder
+
 try:
     import horovod.torch as hvd
 except ImportError:
@@ -326,7 +328,11 @@ class ResampledShards2(IterableDataset):
 
 
 def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokenizer=None):
-    input_shards = args.train_data if is_train else args.val_data
+    # provide path to the file with url string
+    with open(args.train_data, "r") as url_file:
+        urls = url_file.read().strip()
+
+    input_shards = urls if is_train else args.val_data
     assert input_shards is not None
     resampled = getattr(args, 'dataset_resampled', False) and is_train
 
