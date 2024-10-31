@@ -1,0 +1,2 @@
+user,data_range,train_num_samples,accum_freq,lr_scheduler,dataset_type,learning_rate,beta1,beta2,warmup_steps,weight_decay,batch_size,epochs,num_workers,model,precision,log_steps,seed,logs_dir,pretrained,report_to,wandb_project_name
+ale9806,{000000..000100},10000,2,cosine,webdataset,1e-06,0.9,0.95,1000,0.2,512,100,1,ViT-L-14,fp16,1,0,./logs_ViT_L_14,commonpool_xl_clip_s13b_b90k,wandb,open-biomed-clip

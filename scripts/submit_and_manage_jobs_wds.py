@@ -8,6 +8,7 @@ from typing import Optional
 from huggingface_hub import HfApi, HfFolder
 
 # Constants
+URL_PATH = "/pasteur/u/minwoos/open_clip/scripts/urls.txt"
 GPU_TYPE="a6000"
 NUM_NODES = 1
 NUM_GPUS = 1
@@ -21,7 +22,7 @@ error_dict = {
 }
 
 
-def generate_tar_urls_from_repo(base_path: str, repo_id: str, url_output_path="./urls.txt": str) -> None:
+def generate_tar_urls_from_repo(base_path: str, repo_id: str, url_path: str) -> None:
     """
     Retrieve .tar filenames from a Hugging Face dataset repository, filter them,
     and generate a file with URLs for each .tar file in the repository. 
@@ -50,7 +51,7 @@ def generate_tar_urls_from_repo(base_path: str, repo_id: str, url_output_path=".
     
     # Generate URLs and write them to a file
     urls = "::".join([f"{base_path}{filename}" for filename in tar_files])
-    with open(url_out_path, "w") as url_file:
+    with open(url_path, "w") as url_file:
         url_file.write(urls)
 
 
@@ -109,11 +110,10 @@ def find_free_port() -> int:
 # Function to submit and monitor a single job
 def submit_and_monitor_job(row, df):
 
-    # create url string
+    # create url string text file
     base_path = "https://huggingface.co/datasets/minwoosun/BioMedICA/resolve/main/"
     repo_id = "minwoosun/BioMedICA"
-    url_output_path = "./urls.txt"
-    url_file_path = generate_tar_urls_from_repo(base_path, repo_id, url_output_path)
+    generate_tar_urls_from_repo(base_path, repo_id, URL_PATH)
     
     os.makedirs('./slurm_logs_debug', exist_ok=True)
 
@@ -127,7 +127,7 @@ def submit_and_monitor_job(row, df):
 
     with open(BATCH_SCRIPT, "w") as f:
         f.write(f"""#!/bin/bash
-#SBATCH --job-name=dbg2
+#SBATCH --job-name=base
 #SBATCH -p pasteur
 #SBATCH -A pasteur
 #SBATCH --nodes={NUM_NODES}
@@ -135,8 +135,8 @@ def submit_and_monitor_job(row, df):
 #SBATCH --mem=32GB
 #SBATCH --gres=gpu:{GPU_TYPE}:{NUM_GPUS}
 #SBATCH --cpus-per-task={2 * NUM_GPUS}
-#SBATCH --output=./slurm_logs_debug/overfit-%j-out.txt
-#SBATCH --error=./slurm_logs_debug/overfit-%j-err.txt
+#SBATCH --output=./slurm_logs_debug/base-%j-out.txt
+#SBATCH --error=./slurm_logs_debug/base-%j-err.txt
 #SBATCH --exclude=pasteur[1-4,8-9]
 
 nodes=( $( scontrol show hostnames $SLURM_JOB_NODELIST ) )
@@ -160,7 +160,7 @@ cd ../src
 
 srun torchrun --nproc_per_node={NUM_GPUS} --nnodes={NUM_NODES} --node_rank=$SLURM_NODEID --rdzv_id {RDZV_ID} --rdzv_backend c10d --rdzv_endpoint $head_node_ip:{RDZV_PORT} -m open_clip_train.main \
     --save-most-recent \
-    --train-data "/pasteur/u/minwoos/open_clip/scripts/urls.txt" \
+    --train-data {URL_PATH} \
     --train-num-samples 15150000 \
     --accum-freq 2 \
     --lr-scheduler "cosine" \
@@ -174,7 +174,7 @@ srun torchrun --nproc_per_node={NUM_GPUS} --nnodes={NUM_NODES} --node_rank=$SLUR
     --epochs 4 \
     --workers 1 \
     --model "ViT-L-14" \
-    --precision "fp16" \
+    --precision "fp32" \
     --local-loss \
     --gather-with-grad \
     --grad-checkpointing \
@@ -183,7 +183,7 @@ srun torchrun --nproc_per_node={NUM_GPUS} --nnodes={NUM_NODES} --node_rank=$SLUR
     --logs ./logs_exp_wds/ \
     --pretrained "commonpool_xl_clip_s13b_b90k" \
     --report-to "wandb" \
-    --wandb-project-name "biomedica-ablation-debug"
+    --wandb-project-name "biomedica-ablation"
 """)
 
     # Submit the job
