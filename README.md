@@ -142,12 +142,6 @@ For more detailed args explanation, please refer to：[https://github.com/mlfoun
 
 
 
-
-
-
-
-
-
 #### Epochs
 
 For larger datasets (eg Laion2B), we recommend setting `--train-num-samples` to a lower value than the full epoch, for example `--train-num-samples 135646078` to 1/16 of an epoch in conjunction with `--dataset-resampled` to do sampling with replacement. This allows having frequent checkpoints to evaluate more often.
@@ -169,11 +163,6 @@ Using `--dataset-resampled` is recommended for these cases.
 By default, on expectation the amount of times the model will see a sample from each source is proportional to the size of the source.
 For instance, when training on one data source with size 400M and one with size 10M, samples from the first source are 40x more likely to be seen in expectation.
 
-We also support different weighting of the data sources, by using the `--train-data-upsampling-factors` flag.
-For instance, using `--train-data-upsampling-factors=1::1` in the above scenario is equivalent to not using the flag, and `--train-data-upsampling-factors=1::2` is equivalent to upsampling the second data source twice.
-If you want to sample from data sources with the same frequency, the upsampling factors should be inversely proportional to the sizes of the data sources.
-For instance, if dataset `A` has 1000 samples and dataset `B` has 100 samples, you can use `--train-data-upsampling-factors=0.001::0.01` (or analogously, `--train-data-upsampling-factors=1::10`).
-
 #### Single-Node
 
 We make use of `torchrun` to launch distributed jobs. The following launches a
@@ -192,7 +181,6 @@ torchrun --nproc_per_node 4 -m open_clip_train.main \
 ```
 
 #### Multi-Node
-
 The same script above works, so long as users include information about the number
 of nodes and host node.
 
@@ -239,7 +227,7 @@ export PYTHONPATH="$PYTHONPATH:$PWD/src"
 srun --cpu_bind=v --accel-bind=gn python -u src/open_clip_train/main.py \
     --save-frequency 1 \
     --report-to tensorboard \
-    --train-data="/data/LAION-400M/{00000..41455}.tar" \
+    --train-data="/path_to_biomedica_tars/{00000..41455}.tar" \
     --warmup 2000 \
     --batch-size=256 \
     --epochs=32 \
