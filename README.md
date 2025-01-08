@@ -94,11 +94,11 @@ open_clip.list_pretrained()
 
 
 
-# 5. Train your model
+# 5. Train Custom CLIP using Biomedica
 
 To train CLIP-style models using a webdataset locally (e.g. biomedica_webdataset), first download the dataset locally. Then run the following commands:
 
-## 5.A Training using webdataset without streaming
+## 5.A Training CLIP using webdataset without streaming
 
 A SlURM-ready script is already provided at: [train clip](https://github.com/Ale9806/open_clip/blob/main/src/train_clip_w_local_data.sh)
 
@@ -246,6 +246,13 @@ python -m open_clip_train.main \
     --val-data="/path/to/validation_data.csv"  \
     --resume /path/to/checkpoints/epoch_K.pt
 ```
+
+
+
+## 5.A Training CLIP using webdataset with streaming
+
+[MIN]
+
 
 ## Citing
 
