@@ -1,45 +1,23 @@
-# OpenCLIP
+# OpenCLIP + Biomedica
+This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style models using the Biomedical archive. All credits go to the original developers of [OpeCLIP](https://github.com/mlfoundations/open_clip)
 
 
-
-We advise you first create a virtual environment with:
+To start, please  create a virtual environment with:
 
 ```
-python3 -m venv .env
+python3 -m my_clip_env .env
 source .env/bin/activate
-pip install -U pip
+pip install open_clip_torch[training]
 ```
 
-You can then install openclip for training with `pip install 'open_clip_torch[training]'`.
+Then install pip PyTorch as per https://pytorch.org/get-started/locally/
 
-#### Development
 
-If you want to make changes to contribute code, you can clone openclip then run `make install` in openclip folder (after creating a virtualenv)
+## 1. Training using webdataset without streaming
 
-Install pip PyTorch as per https://pytorch.org/get-started/locally/
+To train CLIP-style models using a webdataset locally (e.g. biomedica_webdataset), first download the dataset locally. Then run the following commands:
 
-You may run `make install-training` to install training deps
-
-#### Testing
-
-Test can be run with `make install-test` then `make test`
-
-`python -m pytest -x -s -v tests -k "training"` to run a specific test
-
-Running regression tests against a specific git revision or tag:
-1. Generate testing data
-    ```sh
-    python tests/util_test.py --model RN50 RN101 --save_model_list models.txt --git_revision 9d31b2ec4df6d8228f370ff20c8267ec6ba39383
-    ```
-    **_WARNING_: This will invoke git and modify your working tree, but will reset it to the current state after data has been generated! \
-    Don't modify your working tree while test data is being generated this way.**
-
-2. Run regression tests
-    ```sh
-    OPEN_CLIP_TEST_REG_MODELS=models.txt python -m pytest -x -s -v -m regression_test
-    ```
-
-### Sample single-process running code:
+### 1.A Training using  single-process:
 
 ```bash
 python -m open_clip_train.main \
