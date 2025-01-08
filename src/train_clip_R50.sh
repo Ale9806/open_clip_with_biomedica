@@ -15,14 +15,10 @@
 export CUDA_VISIBLE_DEVICES=0,1
 export WANDB_RUN_GROUP="R50_CT_from_webli"
 
-#['openai', 'yfcc15m', 'cc12m']
-#output-000001.tar
-#--train-data '/pasteur2/u/ale9806/data/pmc-oa/{000000..000820}.tar' \
-# --train-num-samples 820000 \
-#torchrun -m  --rdzv-backend=c10d --rdzv-endpoint=localhost:0 --nnodes=1 open_clip_train.main \
+
 srun torchrun --nproc_per_node=2 --nnodes=1 --rdzv_id 1234 --rdzv_backend c10d --rdzv_endpoint localhost:1234  -m open_clip_train.main  \
     --save-most-recent \
-    --train-data '/pasteur2/u/ale9806/data/pmc-oa/{000000..000002}.tar' \
+    --train-data 'path/to/tar/files/{000000..002222}.tar' \
     --train-num-samples 820000 \
     --accum-freq 2\
     --lr-scheduler 'cosine' \
