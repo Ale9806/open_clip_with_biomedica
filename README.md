@@ -1,12 +1,12 @@
 # How to Train a CLIP-like Model with OpenBioScience
 This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style models using the Biomedical archive. All credits go to the original developers of [OpeCLIP](https://github.com/mlfoundations/open_clip). This repository also builds upon an original discussion on OpenCLIP's [GitHub](https://github.com/mlfoundations/open_clip/discussions/812).
 
-### Introduction
+# Introduction
 
 OpenCLIP has gained recognition in both academic and industrial communities as an exceptional open-source framework for training CLIP-like models. However, the documentation can be lacking when it comes to fine-tuning these models for specific downstream tasks using custom datasets. For beginners, this can be overwhelming as they might not know where to begin. This guide outlines some key considerations and best practices for using OpenCLIP effectively.
 
 
-### Step 1: Create a Virtual Environment
+# Step 1: Create a Virtual Environment
 
 To begin, we need to set up a virtual environment. Based on my own testing, **Python 3.9** works well. You can create the environment using the following command:
 
@@ -48,7 +48,7 @@ print(torch.cuda.is_available()) # verify it prints True
 True 
 ```
 ---
-### Step 3: Clone and install the open_clip 
+# Step 3: Clone and install the open_clip 
 
 ```bash
 # Clone repo
@@ -75,7 +75,7 @@ wandb login
 ```
 
 ---
-###  Step 4: Chose a suitable pre-trained model
+#  Step 4: Chose a suitable pre-trained model
 OpenClip official provides quite a lot pre-trained models of the CLIP series for downloading and usage. You can use the following command to view the specific details of these models.
 
 The first column represents the model’s name, which is also the parameter for text encoding in the model. The second column indicates either the provider of the model or the scale of training dataset used.
@@ -94,7 +94,7 @@ open_clip.list_pretrained()
 
 
 
-## 5. Train your model
+# 5. Train your model
 
 To train CLIP-style models using a webdataset locally (e.g. biomedica_webdataset), first download the dataset locally. Then run the following commands:
 
