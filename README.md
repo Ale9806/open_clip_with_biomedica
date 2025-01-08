@@ -249,7 +249,7 @@ python -m open_clip_train.main \
 
 
 
-## 5.A Training CLIP using webdataset with streaming
+## 5.B Training CLIP using webdataset with streaming
 
 [MIN]
 
