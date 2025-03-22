@@ -1,3 +1,7 @@
+<div align="center" style="margin-bottom: -20px;">
+    <img src="https://raw.githubusercontent.com/minwoosun/biomedica-etl/refs/heads/main/media/Biomedica-Isologo-sin-espacio-2025.png" alt="Pull Figure" />
+</div>
+
 # How to Train a CLIP-like Model with BIOMEDICA?
 This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style models using the Biomedical archive. All credits go to the original developers of [OpeCLIP](https://github.com/mlfoundations/open_clip). This repository also builds upon an original discussion on OpenCLIP's [GitHub](https://github.com/mlfoundations/open_clip/discussions/812).
 
