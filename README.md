@@ -20,8 +20,8 @@ conda activate train_clip
 ```
 ---
 
-### Step 2: Install environment
-Check your CUDA version before installing torch and the corresponding packages， if we install the dependencies by directly using official command, we are very likely to encounter a series of errors caused by mismatched torch versions and CUDA versions. So install your environment according to the actual situation.
+### Step 2: Install the environment
+Check your CUDA version before installing torch and the corresponding packages， if we install the dependencies by directly using the official command, we will likely encounter a series of errors caused by mismatched torch versions and CUDA versions. So install your environment according to the actual situation.
 
 ```python
 # Check CUDA versaion
