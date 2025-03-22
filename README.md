@@ -4,6 +4,17 @@
     <img src="https://raw.githubusercontent.com/minwoosun/biomedica-etl/refs/heads/main/media/Biomedica%20Isologo%202025_Isologo%20horizontal_.png" alt="Pull Figure" />
 </div>
 
+<p align="center">
+  <strong>Arxiv:</strong> <a href="https://arxiv.org/pdf/2501.07171" target="_blank">Arxiv</a> 
+  &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Website:</strong> <a href="https://minwoosun.github.io/biomedica-website" target="_blank">Biomedica</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+ <strong>Training instructions:</strong> <a href="https://github.com/Ale9806/open_clip_with_biomedica" target="_blank">CLIP</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+   <strong>Models and Datasets </strong> <a href="https://huggingface.co/BIOMEDICA" target="_blank">Hugging Face</a>
+
+</p>
+
 
 # How to Train a CLIP-like Model with BIOMEDICA?
 This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style models using the Biomedical archive. All credits go to the original developers of [OpeCLIP](https://github.com/mlfoundations/open_clip). This repository also builds upon an original discussion on OpenCLIP's [GitHub](https://github.com/mlfoundations/open_clip/discussions/812).
