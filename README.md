@@ -6,7 +6,7 @@ This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style
 OpenCLIP has gained recognition in both academic and industrial communities as an exceptional open-source framework for training CLIP-like models. However, the documentation can be lacking when it comes to fine-tuning these models for specific downstream tasks using custom datasets. For beginners, this can be overwhelming as they might not know where to begin. This guide outlines some key considerations and best practices for using OpenCLIP effectively.
 
 
-# Step 1: Create a Virtual Environment
+## Step 1: Create a Virtual Environment
 
 To begin, we need to set up a virtual environment. Based on my own testing, **Python 3.9** works well. You can create the environment using the following command:
 
@@ -20,7 +20,7 @@ conda activate train_clip
 ```
 ---
 
-### Step 2: Install the environment
+## Step 2: Install the environment
 Check your CUDA version before installing torch and the corresponding packages， if we install the dependencies by directly using the official command, we will likely encounter a series of errors caused by mismatched torch versions and CUDA versions. So install your environment according to the actual situation.
 
 ```python
@@ -48,7 +48,7 @@ print(torch.cuda.is_available()) # verify it prints True
 True 
 ```
 ---
-# Step 3: Clone and install the open_clip 
+## Step 3: Clone and install the open_clip 
 
 ```bash
 # Clone repo
@@ -75,8 +75,8 @@ wandb login
 ```
 
 ---
-#  Step 4: Chose a suitable pre-trained model
-OpenClip official provides quite a lot pre-trained models of the CLIP series for downloading and usage. You can use the following command to view the specific details of these models.
+##  Step 4: Chose a suitable pre-trained model
+OpenClip official provides quite a lot of pre-trained models of the CLIP series for downloading and usage. You can use the following command to view the specific details of these models.
 
 The first column represents the model’s name, which is also the parameter for text encoding in the model. The second column indicates either the provider of the model or the scale of training dataset used.
 
@@ -94,7 +94,7 @@ open_clip.list_pretrained()
 
 
 
-# 5. Train Custom CLIP using Biomedica
+## 5. Train Custom CLIP using Biomedica
 
 To train CLIP-style models using a webdataset locally (e.g. biomedica_webdataset), first download the dataset locally. Then run the following commands:
 
