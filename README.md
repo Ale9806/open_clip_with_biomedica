@@ -249,9 +249,7 @@ python -m open_clip_train.main \
 
 
 
-## 5.B Training CLIP using webdataset with streaming
 
-[MIN]
 
 
 ## Citing
