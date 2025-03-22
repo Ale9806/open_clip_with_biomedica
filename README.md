@@ -1,4 +1,4 @@
-# How to Train a CLIP-like Model with OpenBioScience
+# How to Train a CLIP-like Model with BIOMEDICA?
 This is a (very minor) adaptation of the OpenCLIP repository to train CLIP-style models using the Biomedical archive. All credits go to the original developers of [OpeCLIP](https://github.com/mlfoundations/open_clip). This repository also builds upon an original discussion on OpenCLIP's [GitHub](https://github.com/mlfoundations/open_clip/discussions/812).
 
 # Introduction
