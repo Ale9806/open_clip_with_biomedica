@@ -118,7 +118,7 @@ To train CLIP-style models using a webdataset locally (e.g. biomedica_webdataset
 
 ## 5.A Training CLIP using webdataset without streaming
 
-A SlURM-ready script is already provided at: [train clip](https://github.com/Ale9806/open_clip/blob/main/src/train_clip_w_local_data.sh)
+A SLURM-ready script is already provided at: [train clip](https://github.com/Ale9806/open_clip/blob/main/src/train_clip_w_local_data.sh)
 
 ```python
 # Enter the src folder of the open_clip repository
